@@ -10,11 +10,13 @@
   "dependencies": {
     "bn.js": "^5.2.0",
     "dotenv": "^10.0.0",
+    "request-promise": "^4.2.6",
     "stellar-sdk": "^8.2.4",
     "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
   },
   "devDependencies": {
-    "@types/bn.js": "^5.1.0"
+    "@types/bn.js": "^5.1.0",
+    "@types/request-promise": "^4.1.48"
   }
 }
