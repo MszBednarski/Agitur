@@ -2,8 +2,9 @@ require("dotenv").config();
 import * as StellarSdk from "stellar-sdk";
 import * as shared from "./shared";
 import * as asset from "./Asset";
-import * as exchange from "./Exchange";
 import * as wallet from "./Wallet";
+import * as exchange from "./Exchange";
+import { BN } from "bn.js";
 
 async function getEths() {
   const code = "ETH";
@@ -21,14 +22,17 @@ async function logMain() {
   await shared.logBalance(shared.getKeypair("SECRET").publicKey());
 }
 
-function getIssuingAndDistPairs() {
-  const issuing = asset.getIssuingKeypairs();
-  const dist = asset.getDistributionKeypairs();
-  return issuing.map((i, index) => ({ issuing: i, distribution: dist[index] }));
-}
-
 (async () => {
   await logMain();
   await wallet.logWallet();
-  const pairs = getIssuingAndDistPairs();
+  await exchange.logDistributionAccounts();
+  // await exchange.listAssets(new BN(100000000));
+  // await wallet.createAssetOrders(
+  //   wallet.getWallet(),
+  //   pairs.map(
+  //     (p) => new StellarSdk.Asset(p.issuing.code, p.issuing.keypair.publicKey())
+  //   ),
+  //   // diversify 9 XLM
+  //   new BN(90000001)
+  // );
 })();

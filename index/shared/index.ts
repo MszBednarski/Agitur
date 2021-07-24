@@ -1,8 +1,11 @@
 import * as StellarSdk from "stellar-sdk";
+import BN from "bn.js";
 
 export function getKeypair(key: string) {
   return StellarSdk.Keypair.fromSecret(getSecret(key));
 }
+
+export const decimals = new BN(10).pow(new BN(7));
 
 export const server = new StellarSdk.Server(
   "https://horizon-testnet.stellar.org"
@@ -81,4 +84,14 @@ export async function fundAccounts(accountIds: string[], num: string) {
     }
     return tx.setTimeout(30).build();
   });
+}
+
+export function BNtoStellarString(b: BN) {
+  const fractionalPart = b.mod(decimals);
+  const integerPart = b.sub(fractionalPart).div(decimals);
+  // need to pad the fractional part with zeroes
+  const pad = new Array(7 - fractionalPart.toString().length)
+    .fill("0")
+    .join("");
+  return `${integerPart.toString()}.${pad}${fractionalPart.toString()}`;
 }

@@ -1,6 +1,8 @@
 import * as StellarSdk from "stellar-sdk";
 import { Keypair } from "stellar-sdk";
 import * as shared from "../shared";
+import BN from "bn.js";
+import * as oracle from "../Oracle";
 
 export async function optIntoAssets(
   walletAcc: StellarSdk.Keypair,
@@ -40,4 +42,28 @@ export function getWallet() {
 
 export async function logWallet() {
   await shared.logBalance(getWallet().publicKey());
+}
+
+export async function createAssetOrders(
+  walletAcc: StellarSdk.Keypair,
+  assets: StellarSdk.Asset[],
+  balance: BN
+) {
+  const balancePerAsset = balance.div(new BN(assets.length));
+  const assetsData = oracle.getAssetsData(assets, balancePerAsset);
+  console.log(assetsData);
+  await shared.TX(walletAcc, async (tx) => {
+    for (let data of assetsData) {
+      tx = tx.addOperation(
+        StellarSdk.Operation.manageBuyOffer({
+          selling: StellarSdk.Asset.native(),
+          buying: data.asset,
+          buyAmount: data.buyAmount,
+          price: data.price,
+          offerId: 0,
+        })
+      );
+    }
+    return tx.setTimeout(30).build();
+  });
 }
