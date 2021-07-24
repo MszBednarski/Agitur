@@ -50,7 +50,23 @@ export async function createAssetOrders(
   balance: BN
 ) {
   const balancePerAsset = balance.div(new BN(assets.length));
-  const assetsData = oracle.getAssetsData(assets, balancePerAsset);
+  const assetsData = assets.map((a) => {
+    /**
+     * balancePerAsset * 10^7 / price
+     */
+    const assetPrice = oracle.getAssetPrice(a.code);
+    const buyAmount = shared.BNtoStellarString(
+      balancePerAsset.mul(shared.decimals).div(assetPrice)
+    );
+    const price = shared.BNtoStellarString(assetPrice);
+    return {
+      buyAmount,
+      price,
+      asset: a,
+    };
+  });
+  console.log({ balanceToConvert: shared.BNtoStellarString(balance) });
+  console.log({ balancePerAsset: shared.BNtoStellarString(balancePerAsset) });
   console.log(assetsData);
   await shared.TX(walletAcc, async (tx) => {
     for (let data of assetsData) {
@@ -58,7 +74,9 @@ export async function createAssetOrders(
         StellarSdk.Operation.manageBuyOffer({
           selling: StellarSdk.Asset.native(),
           buying: data.asset,
+          // The total amount you're buying. If 0, deletes the offer.
           buyAmount: data.buyAmount,
+          // Price of 1 unit of buying in terms of selling.
           price: data.price,
           offerId: 0,
         })

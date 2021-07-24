@@ -2,11 +2,14 @@ import BN from "bn.js";
 import * as StellarSdk from "stellar-sdk";
 import * as shared from "../shared";
 
+
+
 const price = {
-  GOLD: new BN(100),
-  ETH: new BN(3000),
-  BOND: new BN(2323),
-  APPL: new BN(420),
+  // in terms of XLM
+  GOLD: new BN(100).mul(shared.decimals),
+  ETH: new BN(3000).mul(shared.decimals),
+  BOND: new BN(2323).mul(shared.decimals),
+  APPL: new BN(420).mul(shared.decimals),
 };
 
 export function getAssetPrice(code: string): BN {
@@ -15,17 +18,4 @@ export function getAssetPrice(code: string): BN {
   }
   //@ts-ignore
   return price[code];
-}
-
-export function getAssetsData(assets: StellarSdk.Asset[], balancePerAsset: BN) {
-  return assets.map((a) => {
-    const assetPrice = getAssetPrice(a.code);
-    const buyAmount = shared.BNtoStellarString(balancePerAsset.div(assetPrice));
-    const price = shared.BNtoStellarString(assetPrice);
-    return {
-      buyAmount,
-      price,
-      asset: a,
-    };
-  });
 }

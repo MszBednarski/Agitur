@@ -23,15 +23,14 @@ async function logMain() {
 }
 
 (async () => {
-  await logMain();
+  // await logMain();
   await wallet.logWallet();
-  await exchange.logDistributionAccounts();
+  // await exchange.logDistributionAccounts();
+  // await exchange.takeDownOffers();
   // await exchange.listAssets(new BN(100000000));
   // await wallet.createAssetOrders(
   //   wallet.getWallet(),
-  //   pairs.map(
-  //     (p) => new StellarSdk.Asset(p.issuing.code, p.issuing.keypair.publicKey())
-  //   ),
+  //   exchange.getAssets(),
   //   // diversify 9 XLM
   //   new BN(90000001)
   // );
