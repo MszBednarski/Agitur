@@ -1,8 +1,53 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { Box, Heading } from "grommet";
+import { makeAutoObservable, runInAction } from "mobx";
+import BN from "bn.js";
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
-export default function Home() {
+const decimals = new BN(10).pow(new BN(7));
+
+function BNtoStellarString(b: BN) {
+  const fractionalPart = b.mod(decimals);
+  const integerPart = b.sub(fractionalPart).div(decimals);
+  // need to pad the fractional part with zeroes
+  const pad = new Array(7 - fractionalPart.toString().length)
+    .fill("0")
+    .join("");
+  return `${integerPart.toString()}.${pad}${fractionalPart.toString()}`;
+}
+
+class XLMPrice {
+  private price: BN = new BN(0);
+  constructor() {
+    makeAutoObservable(this);
+  }
+  get priceDisp() {
+    return BNtoStellarString(this.price);
+  }
+  async getPrice() {
+    const res = await fetch("/api/stellar", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await res.json();
+
+    const price = json.price;
+    runInAction(() => {
+      this.price = new BN(price);
+    });
+  }
+}
+
+const xlmPrice = new XLMPrice();
+
+export default observer(() => {
+  useEffect(() => {
+    xlmPrice.getPrice();
+  }, []);
   return (
     <div className={styles.container}>
       <Head>
@@ -19,9 +64,11 @@ export default function Home() {
             width="32"
             alt="XLM"
           />
-          <p className={styles.description}>XLM</p>
+          <p
+            className={styles.description}
+          >{`XLM: ${xlmPrice.priceDisp} USD`}</p>
         </Box>
       </div>
     </div>
   );
-}
+});
