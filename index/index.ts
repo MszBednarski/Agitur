@@ -25,10 +25,36 @@ async function logMain() {
 (async () => {
   // await logMain();
   await wallet.logWallet();
-  // await exchange.logDistributionAccounts();
+  // exchange.logAssetSells();
+  // exchange.logDistribution()
+  // exchange.logOffers();
+  // exchange.takeDownOffers()
+  // exchange.makeMarket(shared.decimals.mul(new BN(2)));
+  // wallet.takeDownOffers()
+
+  // await shared.TX(shared.getKeypair("SECRET"), async (tx) => {
+  //   for (const pair of exchange.getIssuingAndDistPairs()) {
+  //     tx = tx.addOperation(
+  //       StellarSdk.Operation.payment({
+  //         destination: pair.distribution.keypair.publicKey(),
+  //         asset: StellarSdk.Asset.native(),
+  //         amount: "100",
+  //       })
+  //     );
+  //   }
+  //   return tx.setTimeout(30).build();
+  // });
+  // asset.issueAsset(exchange.getIssuingAndDistPairs(), "15");
+  // await exchange.listBuyOfAssets(new BN(200))
+  // await wallet.takeDownOffers();
+  // await wallet.sellDiversifiedPortfolio(
+  //   wallet.getWallet(),
+  //   exchange.getAssets()
+  // );
+  // await exchange.logAssetSells();
   // await exchange.takeDownOffers();
   // await exchange.listAssets(new BN(100000000));
-  // await wallet.createAssetOrders(
+  // await wallet.diversifyXLM(
   //   wallet.getWallet(),
   //   exchange.getAssets(),
   //   // diversify 9 XLM
