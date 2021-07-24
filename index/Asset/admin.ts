@@ -29,3 +29,28 @@ export async function changeTrust(
     });
   }
 }
+
+export async function issueAsset(
+  both: {
+    issuing: AssetKeypair;
+    distribution: AssetKeypair;
+  }[],
+  amount: string
+) {
+  for (let pair of both) {
+    await TX(pair.issuing.keypair, async (tx) => {
+      tx = tx.addOperation(
+        // this operation funds the new account with XLM
+        StellarSdk.Operation.payment({
+          destination: pair.distribution.keypair.publicKey(),
+          asset: new StellarSdk.Asset(
+            pair.issuing.code,
+            pair.issuing.keypair.publicKey()
+          ),
+          amount,
+        })
+      );
+      return tx.setTimeout(30).build();
+    });
+  }
+}

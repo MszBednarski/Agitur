@@ -12,6 +12,7 @@ import {
   getDistributionKeypairs,
   getIssuingKeypairs,
   changeTrust,
+  issueAsset,
 } from "./Asset";
 
 const acc = getKeypair("SECRET");
@@ -68,6 +69,6 @@ function getIssuingAndDistPairs() {
 (async () => {
   await logMain();
   const both = getIssuingAndDistPairs();
-  await changeTrust(both);
+  await issueAsset(both, "100");
   both.map((b) => logBalance(b.distribution.keypair.publicKey()));
 })();
