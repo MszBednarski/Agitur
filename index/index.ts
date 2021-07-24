@@ -1,54 +1,15 @@
 require("dotenv").config();
 import * as StellarSdk from "stellar-sdk";
-import {
-  getKeypair,
-  server,
-  logBalance,
-  fundAccounts,
-  TX,
-  logAccount,
-} from "./shared";
-import {
-  getDistributionKeypairs,
-  getIssuingKeypairs,
-  changeTrust,
-  issueAsset,
-} from "./Asset";
-
-const acc = getKeypair("SECRET");
-
-async function test() {
-  const account = await server.loadAccount(acc.publicKey());
-  const fee = await server.fetchBaseFee();
-  const transaction = new StellarSdk.TransactionBuilder(account, {
-    fee: fee + "",
-    networkPassphrase: StellarSdk.Networks.TESTNET,
-  })
-    .addOperation(
-      // this operation funds the new account with XLM
-      StellarSdk.Operation.payment({
-        destination: "GASOCNHNNLYFNMDJYQ3XFMI7BYHIOCFW3GJEOWRPEGK2TDPGTG2E5EDW",
-        asset: StellarSdk.Asset.native(),
-        amount: "2",
-      })
-    )
-    .setTimeout(30)
-    .build();
-  // sign the transaction
-  transaction.sign(acc);
-  try {
-    const transactionResult = await server.submitTransaction(transaction);
-    console.log(transactionResult);
-  } catch (err) {
-    console.error(err);
-  }
-}
+import * as shared from "./shared";
+import * as asset from "./Asset";
+import * as exchange from "./Exchange";
+import * as wallet from "./Wallet";
 
 async function getEths() {
   const code = "ETH";
   console.log(code);
   const eths = [];
-  let page = await server.assets().forCode(code).order("desc").call();
+  let page = await shared.server.assets().forCode(code).order("desc").call();
   while (page.records.length != 0) {
     console.log(page.records);
     eths.push(...page.records);
@@ -57,18 +18,17 @@ async function getEths() {
 }
 
 async function logMain() {
-  await logBalance(acc.publicKey());
+  await shared.logBalance(shared.getKeypair("SECRET").publicKey());
 }
 
 function getIssuingAndDistPairs() {
-  const issuing = getIssuingKeypairs();
-  const dist = getDistributionKeypairs();
+  const issuing = asset.getIssuingKeypairs();
+  const dist = asset.getDistributionKeypairs();
   return issuing.map((i, index) => ({ issuing: i, distribution: dist[index] }));
 }
 
 (async () => {
   await logMain();
-  const both = getIssuingAndDistPairs();
-  await issueAsset(both, "100");
-  both.map((b) => logBalance(b.distribution.keypair.publicKey()));
+  await wallet.logWallet();
+  const pairs = getIssuingAndDistPairs();
 })();

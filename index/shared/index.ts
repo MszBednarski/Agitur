@@ -8,7 +8,7 @@ export const server = new StellarSdk.Server(
   "https://horizon-testnet.stellar.org"
 );
 
-export function getSecret(name: string) {
+function getSecret(name: string) {
   const key = process.env[name];
   if (!key) {
     throw new Error(`No ${name} in .env`);
