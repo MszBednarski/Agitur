@@ -1,9 +1,13 @@
 import { assetKeys } from "./config";
 import * as StellarSdk from "stellar-sdk";
 import { getKeypair } from "../shared";
+import { AssetKeypair } from "./interfaces";
 
-export function getIssuingKeypairs() {
-  return assetKeys.map((k) => getKeypair(k));
+export function getIssuingKeypairs(): AssetKeypair[] {
+  return assetKeys.map((k) => ({
+    code: k,
+    keypair: getKeypair(k),
+  }));
 }
 
 export async function createIssuingAccountKeypairs() {

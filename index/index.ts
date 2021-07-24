@@ -1,7 +1,18 @@
 require("dotenv").config();
 import * as StellarSdk from "stellar-sdk";
-import { getKeypair, server, logBalance, fundAccounts } from "./shared";
-import { getDistributionKeypairs, getIssuingKeypairs } from "./Asset";
+import {
+  getKeypair,
+  server,
+  logBalance,
+  fundAccounts,
+  TX,
+  logAccount,
+} from "./shared";
+import {
+  getDistributionKeypairs,
+  getIssuingKeypairs,
+  changeTrust,
+} from "./Asset";
 
 const acc = getKeypair("SECRET");
 
@@ -48,11 +59,15 @@ async function logMain() {
   await logBalance(acc.publicKey());
 }
 
+function getIssuingAndDistPairs() {
+  const issuing = getIssuingKeypairs();
+  const dist = getDistributionKeypairs();
+  return issuing.map((i, index) => ({ issuing: i, distribution: dist[index] }));
+}
+
 (async () => {
   await logMain();
-    // const issuing = getIssuingKeypairs();
-    // issuing.map((i) => logBalance(i.publicKey()));
-    // const dist = getDistributionKeypairs();
-    // dist.map((i) => logBalance(i.publicKey()));
-
+  const both = getIssuingAndDistPairs();
+  await changeTrust(both);
+  both.map((b) => logBalance(b.distribution.keypair.publicKey()));
 })();
