@@ -26,7 +26,7 @@ async function logMain() {
   // await logMain();
   await wallet.logWallet();
   // exchange.logAssetSells();
-  // exchange.logDistribution()
+  exchange.logDistribution()
   // exchange.logOffers();
   // exchange.takeDownOffers()
   // exchange.makeMarket(shared.decimals.mul(new BN(2)));
