@@ -1,3 +1,5 @@
+# https://docs.google.com/presentation/d/1-9ajVYOQVs1wvGxZisIjHsdBPUnbPtjYI-fqVGBl_0M/edit#slide=id.p
+
 [[CURRENCIES]]
 code = "BRL"
 issuer = "GDVKY2GU2DRXWTBEYJJWSFXIGBZV6AZNBVVSUHEPZI54LIS6BA7DVVSP"
