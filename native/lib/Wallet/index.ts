@@ -1,6 +1,6 @@
 import {makeAutoObservable, runInAction} from 'mobx';
 import {getSecret, storeSecret} from './storage';
-// import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from 'stellar-sdk';
 
 class WalletManager {
   loading = true;
@@ -19,10 +19,10 @@ class WalletManager {
     });
   }
   async createWallet() {
-    // const random = StellarSdk.Keypair.random();
-    // const secret = random.secret();
-    // await storeSecret(secret);
-    // this.init();
+    const random = StellarSdk.Keypair.random();
+    const secret = random.secret();
+    await storeSecret(secret);
+    this.init();
   }
 }
 

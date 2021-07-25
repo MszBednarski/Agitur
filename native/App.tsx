@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -12,6 +12,9 @@ import {observer} from 'mobx-react-lite';
 import {Section} from './lib/Section';
 
 const App = observer(() => {
+  useEffect(() => {
+    walletManager.init();
+  }, []);
   return (
     <SafeAreaView>
       <StatusBar />
