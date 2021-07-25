@@ -1,6 +1,7 @@
 import {makeAutoObservable, runInAction} from 'mobx';
 import {getSecret, storeSecret} from './storage';
 import * as StellarSdk from 'stellar-sdk';
+import {optIntoAssets, assets} from '../shared';
 
 const initWalletInfo: {pubkey: string} = {pubkey: ''};
 
@@ -11,6 +12,12 @@ class WalletManager {
   private pair: StellarSdk.Keypair | undefined;
   constructor() {
     makeAutoObservable(this);
+  }
+  async optIntoAssets() {
+    if (!this.pair) {
+      throw new Error('No wallet');
+    }
+    await optIntoAssets(this.pair, assets);
   }
   async init() {
     const secret = await getSecret();

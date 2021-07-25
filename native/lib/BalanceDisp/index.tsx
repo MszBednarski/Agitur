@@ -16,6 +16,24 @@ class BalanceDispState {
     makeAutoObservable(this);
   }
   getDisp(pubkey: string) {
+    const unmount1 = getNewServer()
+      .accounts()
+      .accountId(pubkey)
+      .cursor('now')
+      .stream({
+        onmessage: message => {
+          const assets = message.balances.filter(
+            b => b.asset_type != 'native',
+          ) as AssetResponse[];
+          const native = message.balances.filter(
+            b => b.asset_type == 'native',
+          )[0];
+          runInAction(() => {
+            this.assetBalances = assets;
+            this.native = native;
+          });
+        },
+      });
     getNewServer()
       .accounts()
       .accountId(pubkey)
@@ -45,6 +63,7 @@ class BalanceDispState {
       .forAccount(pubkey)
       .call()
       .then(page => handleOffer(page));
+    return unmount1;
   }
 
   private getAssetString(asset: OfferResponse['buying']) {

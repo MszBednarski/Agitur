@@ -36,6 +36,10 @@ const App = observer(() => {
                 }}
               />
               <BalanceDisp pubkey={walletManager.walletInfo.pubkey} />
+              <Button
+                title="Opt into Agitur assets"
+                onPress={() => walletManager.optIntoAssets()}
+              />
             </>
           ) : (
             <Button
