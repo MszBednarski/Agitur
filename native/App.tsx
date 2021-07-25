@@ -10,6 +10,8 @@ import {
 import {walletManager} from './lib/Wallet';
 import {observer} from 'mobx-react-lite';
 import {Section} from './lib/Section';
+import {BalanceDisp} from './lib/BalanceDisp';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 const App = observer(() => {
   useEffect(() => {
@@ -23,7 +25,18 @@ const App = observer(() => {
           {walletManager.loading ? (
             <Text>Loading</Text>
           ) : walletManager.walletExists ? (
-            <Section title="Your wallet">{`Balance: ${500}`}</Section>
+            <>
+              <Section title="Agitur">
+                {`Address: ${walletManager.walletInfo.pubkey}`}
+              </Section>
+              <Button
+                title="Copy Address"
+                onPress={() => {
+                  Clipboard.setString(walletManager.walletInfo.pubkey);
+                }}
+              />
+              <BalanceDisp pubkey={walletManager.walletInfo.pubkey} />
+            </>
           ) : (
             <Button
               title="Create Wallet"

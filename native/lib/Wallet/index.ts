@@ -2,9 +2,13 @@ import {makeAutoObservable, runInAction} from 'mobx';
 import {getSecret, storeSecret} from './storage';
 import * as StellarSdk from 'stellar-sdk';
 
+const initWalletInfo: {pubkey: string} = {pubkey: ''};
+
 class WalletManager {
   loading = true;
   walletExists = false;
+  walletInfo = initWalletInfo;
+  private pair: StellarSdk.Keypair | undefined;
   constructor() {
     makeAutoObservable(this);
   }
@@ -12,6 +16,11 @@ class WalletManager {
     const secret = await getSecret();
     const walletExists = !!secret;
     if (walletExists) {
+      const pair = StellarSdk.Keypair.fromSecret(secret as string);
+      runInAction(() => {
+        this.walletInfo = {pubkey: pair.publicKey()};
+        this.pair = pair;
+      });
     }
     runInAction(() => {
       this.loading = false;
